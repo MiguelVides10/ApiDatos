@@ -28,5 +28,48 @@ namespace ApiDatos.Controllers
 
             return Ok(listas);
         }
+
+        [HttpGet]
+        [Route("GetById{id}")]
+        public IActionResult Get(int id)
+        {
+            Listas? lista = (from e in _context.Listas where e.Idlista == id
+                             select e).FirstOrDefault();
+
+            if(lista == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(lista);
+        }
+
+        [HttpGet]
+        [Route("Find/{super}")]
+        public IActionResult FindBySupermercado(string super) {
+            List<Listas> lista = (from e in _context.Listas
+                             where e.Supermercado.Contains(super)
+                             select e).ToList();
+            if(lista== null)
+            {
+                return NotFound();
+            }
+
+            return Ok(lista);
+        }
+
+        [HttpPost]
+        [Route("Add")]
+
+        public IActionResult Add([FromBody] Listas lista) {
+            try
+            {
+                _context.Add(lista);
+                _context.SaveChanges();
+                return Ok(lista);
+            }catch(Exception ex) { 
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
